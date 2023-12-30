@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <nmmintrin.h>
 
 //count number of bits that are on = 1 bits
 //designating number as an unsigned int
@@ -45,13 +46,7 @@ int bitcount(unsigned int number) {
     //space: O(1)
 
 
-    int onBitCount=0;
-
-    while (number) {
-        onBitCount += number & 0b01; 
-        number >>= 1;
-    }
-    return onBitCount;
+    return __builtin_popcount(number);
 }
 
 
