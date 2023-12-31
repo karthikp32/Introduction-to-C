@@ -15,6 +15,12 @@ int turnBitAtIndexOn(int number, int idx) {
   //initialize int lightSwitch = 1
   //lightSwitch << idx
   //number &= 
+
+  //Example: input: number = 0, idx = 3
+  //output: 1000
+
+  //how can I set that bit at that "index" without a left shift operator and more efficiently?
+
   int lightSwitch = 1;
   lightSwitch = lightSwitch << idx;
   number |= lightSwitch;
@@ -51,8 +57,8 @@ bool ispangram(char *s) {
   //convert to lowercase version
   //turn the bit corresponding to this lowercase letter that is one of the letters from a-z on 
   //at that index
-  int counts = 0b00000000000000000000000000;
-  int pangramCounts = 0b11111111111111111111111111;
+  __uint32_t counts = 0b00000000000000000000000000;
+  __uint32_t pangramCounts = 0b11111111111111111111111111;
   char* t = s;
   for (char c = *t; c != '\0'; c=*(++t)) {
     if (isalpha(c)) {
@@ -64,7 +70,7 @@ bool ispangram(char *s) {
     }
   }
 
-  return (counts < pangramCounts) ? false: true;
+  return counts == pangramCounts;
 }
 
 
@@ -72,31 +78,31 @@ bool ispangram(char *s) {
 
 int main() {
 
-  int number = 4;
-  int idx = 1;
-  int expectedNumber = 6;
-  int actualNumber = turnBitAtIndexOn(number, idx);
-  assert(expectedNumber == actualNumber);
+  // int number = 4;
+  // int idx = 1;
+  // int expectedNumber = 6;
+  // int actualNumber = turnBitAtIndexOn(number, idx);
+  // assert(expectedNumber == actualNumber);
 
-  char* test1 = "abcdef";
-  assert(ispangram(test1) == false);
-  printf("ok\n");
+  // char* test1 = "abcdef";
+  // assert(ispangram(test1) == false);
+  // printf("ok\n");
 
-  char* test2 = "Mr. Jock, TV quiz PhD, bags few lynx.";
-  assert(ispangram(test2) == true);
-  printf("ok");
+  // char* test2 = "Mr. Jock, TV quiz PhD, bags few lynx.";
+  // assert(ispangram(test2) == true);
+  // printf("ok");
 
-  // size_t len;
-  // ssize_t read;
-  // char *line = NULL;
-  // while ((read = getline(&line, &len, stdin)) != -1) {
-  //   if (ispangram(line))
-  //     printf("%s", line);
-  // }
+  size_t len;
+  ssize_t read;
+  char *line = NULL;
+  while ((read = getline(&line, &len, stdin)) != -1) {
+    if (ispangram(line))
+      printf("%s", line);
+  }
 
-  // if (ferror(stdin))
-  //   fprintf(stderr, "Error reading from stdin");
+  if (ferror(stdin))
+    fprintf(stderr, "Error reading from stdin");
 
-  // free(line);
-  // fprintf(stderr, "ok\n");
+  free(line);
+  fprintf(stderr, "ok\n");
 }
