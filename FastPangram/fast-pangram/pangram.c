@@ -17,7 +17,7 @@ int turnBitAtIndexOn(int number, int idx) {
   //number &= 
   int lightSwitch = 1;
   lightSwitch = lightSwitch << idx;
-  number &= lightSwitch;
+  number |= lightSwitch;
   return number;
 }
 
@@ -53,12 +53,14 @@ bool ispangram(char *s) {
   //at that index
   int counts = 0b00000000000000000000000000;
   int pangramCounts = 0b11111111111111111111111111;
-  char *t = s;
+  char* t = s;
   for (char c = *t; c != '\0'; c=*(++t)) {
     if (isalpha(c)) {
       char lowercaseLetter = tolower(c);
-      int idx = lowercaseLetter - 97;
-      turnBitAtIndexOn(counts, idx);
+      int ascii = (int) lowercaseLetter;
+      int idx = ascii - 97;
+      // printf("letter: %c, ascii normalized: %d\n", lowercaseLetter, idx);
+      counts = turnBitAtIndexOn(counts, idx);
     }
   }
 
@@ -70,25 +72,31 @@ bool ispangram(char *s) {
 
 int main() {
 
-  // char* test1 = "abcdef";
-  // assert(ispangram(test1) == false);
-  // printf("ok\n");
+  int number = 4;
+  int idx = 1;
+  int expectedNumber = 6;
+  int actualNumber = turnBitAtIndexOn(number, idx);
+  assert(expectedNumber == actualNumber);
 
-  // char* test2 = "Vamp fox held quartz duck just by wing.";
-  // assert(ispangram(test2) == true);
-  // printf("ok");
+  char* test1 = "abcdef";
+  assert(ispangram(test1) == false);
+  printf("ok\n");
 
-  size_t len;
-  ssize_t read;
-  char *line = NULL;
-  while ((read = getline(&line, &len, stdin)) != -1) {
-    if (ispangram(line))
-      printf("%s", line);
-  }
+  char* test2 = "Mr. Jock, TV quiz PhD, bags few lynx.";
+  assert(ispangram(test2) == true);
+  printf("ok");
 
-  if (ferror(stdin))
-    fprintf(stderr, "Error reading from stdin");
+  // size_t len;
+  // ssize_t read;
+  // char *line = NULL;
+  // while ((read = getline(&line, &len, stdin)) != -1) {
+  //   if (ispangram(line))
+  //     printf("%s", line);
+  // }
 
-  free(line);
-  fprintf(stderr, "ok\n");
+  // if (ferror(stdin))
+  //   fprintf(stderr, "Error reading from stdin");
+
+  // free(line);
+  // fprintf(stderr, "ok\n");
 }
