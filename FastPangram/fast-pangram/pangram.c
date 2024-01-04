@@ -27,6 +27,8 @@ int turnBitAtIndexOn(int number, int idx) {
   return number;
 }
 
+
+//Pangrams Problem: Does the given text contain every letter of the alphabet, a-z, where uppercase/lowercase doesn't matter
 bool ispangram(char *s) {
   // Algorithm:
   //Check if there is atleast one occurrence of the each letter 

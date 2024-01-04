@@ -40,6 +40,7 @@ of its usual value.
 In this case, 1110 can be convert to decimal by -8 + 4 + 2 = -2   
 
 
+When does integer overflow happen?
 Integer overflow is when you try to store a number in bits
 larger than the bits can support.
 
