@@ -39,3 +39,24 @@ Decimal 	Hexadecimal
 31	            0x1f
 32	            0x20
 
+
+Converting Binary to Hexadecimal
+
+You can break up a binary number like 1000111110100001 into 4 bit chunks and map them to a hexadecimal number
+
+1000    1111    1010    0001
+
+4 bits can be used to represent 16 different numbers since 2 x 2 x 2 x 2 = 16
+
+0000 to 1111 can be used to represent number 0-15
+
+0-15 represents the first 16 numbers of the hexadecimal number system
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, b, c, d, e, f
+
+1000    1111    1010    0001
+  |       |       |       |    
+  8       f       a       1
+
+1 hexadecimal digit = 4 bits (binary digits)
+
+2 hexadecimal digits = 8 bits = 1 byte

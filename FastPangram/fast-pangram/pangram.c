@@ -19,10 +19,8 @@ int turnBitAtIndexOn(int number, int idx) {
   //Example: input: number = 0, idx = 3
   //output: 1000
 
-  //how can I set that bit at that "index" without a left shift operator and more efficiently?
 
-  int lightSwitch = 1;
-  lightSwitch = lightSwitch << idx;
+  int lightSwitch = 1 << idx;
   number |= lightSwitch;
   return number;
 }
@@ -50,8 +48,10 @@ bool ispangram(char *s) {
 
 
   //Approach 2:
-  //Use 26 bits to represent whether there exists a letter a-z 
-  //in this line. 1 means the character at this "index" in the alphabet
+  //bitset - data structure of N bits where 1 represents true and 0 represents false and can be used 
+  //in problems similar to how a bloom filter can be used
+  //Use bitset of size 26 to represent whether there exists a letter a-z 
+  //in a line. 1 means the character at this "index" in the alphabet
   //exists in this line, 0 means it doesn't
   //for ex. "abcdef" could be represented by "00000000000000000000111111"
   //iterate through each char in the line
@@ -59,20 +59,38 @@ bool ispangram(char *s) {
   //convert to lowercase version
   //turn the bit corresponding to this lowercase letter that is one of the letters from a-z on 
   //at that index
-  __uint32_t counts = 0b00000000000000000000000000;
-  __uint32_t pangramCounts = 0b11111111111111111111111111;
+
+  //Optimized Approach to improve latency even more:
+  //Don't use the toLower() function
+  //and don't subtract
+  //Use the binary representation of the ASCII values
+  //and clear all of the bits expect the 5 rightmost bits
+  //to whether a character is a letter in the alphabet a-z
+  //For ex. The binary number of A's ASCII value of 65 = 01000001
+  //The binary number of a's ASCII value of 97 = 01100001
+  //If you apply a bitmask that clears all of the bits 
+  //except the right most bits, A's and a's ASCII value in binary
+  //will be 00001.
+  //then left shifting 1 by 00001=1 will set the bit at the "index"
+  //corresponding to A and a, which is the bit at "index" 1 of a
+  //32 bit number 
+  //then check if the values at "indices" 1-26 are set in a 32 bit number
+  //and the other bits are cleared 
+
+
+
+  __uint32_t pangramCounts = 0x00000000;
+  #define MASK 0x07fffffe
   char* t = s;
   for (char c = *t; c != '\0'; c=*(++t)) {
-    if (isalpha(c)) {
-      char lowercaseLetter = tolower(c);
-      int ascii = (int) lowercaseLetter;
-      int idx = ascii - 97;
+      if (c < '@')
+        continue;
+      int idx = (c & 0x1f); //This will clear all bits except 5 rightmost bits. For ex. A = 1000001 will be becomes 00001 = 1 in decimal
       // printf("letter: %c, ascii normalized: %d\n", lowercaseLetter, idx);
-      counts = turnBitAtIndexOn(counts, idx);
-    }
+      pangramCounts = turnBitAtIndexOn(pangramCounts, idx);
   }
 
-  return counts == pangramCounts;
+  return (pangramCounts & MASK) == MASK;
 }
 
 

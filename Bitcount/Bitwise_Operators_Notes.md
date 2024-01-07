@@ -3,6 +3,8 @@
 Class of Problems that AND Operator Can Be Useful For:
 1) keeping the same value, 0 or 1, for certain bits in the original binary number
 2) Only keeping certain bits ON
+3) Clear the original bits regardless of whether the original bit was 1 or 0 by ANDing with 0
+4) Keep the original bit as 1 or 0 by ANDing with 1
 
 To keep only certain bits ON, you can AND original number
 by a new number with 1 in places corresponding to the bits you want to keep
@@ -12,7 +14,14 @@ For ex.     To keep the last two 1 bits of the original number on         100000
             which will clear the high-order/left most 1             =     00000011
             and only the last 2 bits will be on                                                                                           
 
+To clear certain bits, you can AND original number
+by a new number with 0 in places corresponding to the bits you want to clear
 
+    1110
+  & 0000
+    0000
+
+    
  Class of Problems that OR Operator Can Be Useful For:
 1) To always keep some bit on. You might want always set the leftmost bit to be 1
 because want all numbers to be negative and these numbers are part of a signed bit system
