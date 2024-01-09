@@ -9,15 +9,20 @@
 
 typedef struct DynamicArray {
   // TODO define our struct
+  int* underlyingArray;
+
 } DynamicArray;
 
 
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
+  struct DynamicArray* dynamicArray;
+  return dynamicArray;
 }
 
 int DA_size(DynamicArray *da) {
   // TODO return the number of items in the dynamic array
+  //keep iterating until you reach an element of a different data
 }
 
 void DA_push (DynamicArray* da, void* x) {
