@@ -9,7 +9,7 @@
 
 typedef struct DynamicArray {
   // TODO define our struct
-  int* underlyingArray;
+  int underlyingArray[1];
 
 } DynamicArray;
 
@@ -17,16 +17,22 @@ typedef struct DynamicArray {
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
+  (*dynamicArray).underlyingArray[0] = '\0';
   return dynamicArray;
 }
 
 int DA_size(DynamicArray *da) {
   // TODO return the number of items in the dynamic array
   //keep iterating until you reach an element of a different data
+  if (sizeof((*da).underlyingArray) > 0 && (*da).underlyingArray[0] != '\0') {
+      return (sizeof((*da).underlyingArray)) / (sizeof((*da).underlyingArray[0]));
+  }
+  return 0;
 }
 
 void DA_push (DynamicArray* da, void* x) {
   // TODO push to the end
+  int size = DA_size(da);
 }
 
 void *DA_pop(DynamicArray *da) {
@@ -57,6 +63,7 @@ int main() {
     DA_push(da, &x);
     DA_push(da, &y);
     assert(DA_size(da) == 2);
+    printf("OK\n");
 
     assert(DA_pop(da) == &y);
     assert(DA_size(da) == 1);
