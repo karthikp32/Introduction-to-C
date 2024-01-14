@@ -9,31 +9,80 @@
 
 typedef struct DynamicArray {
   // TODO define our struct
-  int underlyingArray[1];
-
+  int* underlyingArray;
+  int lastFilledIndex; 
+  int size;
 } DynamicArray;
 
 
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
-  (*dynamicArray).underlyingArray[0] = '\0';
+  int first = '\0';
+  (*dynamicArray).underlyingArray = &first;
+  (*dynamicArray).lastFilledIndex = -1;
+  (*dynamicArray).size = 0;
   return dynamicArray;
 }
 
 int DA_size(DynamicArray *da) {
   // TODO return the number of items in the dynamic array
   //keep iterating until you reach an element of a different data
-  if (sizeof((*da).underlyingArray) > 0 && (*da).underlyingArray[0] != '\0') {
-      return (sizeof((*da).underlyingArray)) / (sizeof((*da).underlyingArray[0]));
-  }
-  return 0;
+  return (*da).size;
 }
 
 void DA_push (DynamicArray* da, void* x) {
   // TODO push to the end
-  int size = DA_size(da);
+  //Approach 1:
+  // Get lastFilledIndex
+  // if lastFilledIndex == -1
+  //    underlyingArray[0] = x
+  // if lastFilledIndex == size of underlyingArray - 1
+  //  initialize new array doubledArray[size of underlyingArray * 2]
+  // iterate from 0 to lastFilledIndex
+  //  set doubledArray[i] = underlyingArray[i]
+  // set doubledArray[lastFilledIndex + 1] = x
+  // free the memory allocated to underlyingArray
+  // set underlying array to doubledArray
+  // else 
+  //set underlyingArray[lastFilledIndex + 1] = x
+  int lastFilledIndex = (*da).lastFilledIndex;
+  int sizeOfDa = DA_size(da);
+  if (lastFilledIndex == -1) {
+    (*da).underlyingArray[0] = x;
+    (*da).size++;
+  }
+
+  if (lastFilledIndex == sizeOfDa - 1) {
+    int sizeOfInt = sizeof(int);
+    int* doubledArray = malloc(sizeOfDa * sizeOfInt * 2);
+
+    //set all values in doubledArray to '\0'
+    for (int i=0; i < sizeOfDa * 2; i++) {
+      *(doubledArray + i) =  '\0';
+    }
+
+    for (int j=0; j <= lastFilledIndex; j++) {
+      *(doubledArray + j) = ((*da).underlyingArray + j);
+    }
+
+    //free memory allocated to underlyingArray
+    free(da->underlyingArray);
+
+    //reassign underlyingArray to point to doubledArray, the first memory address of the sequence of elements
+    *(doubledArray + lastFilledIndex + 1) = x;
+    da->underlyingArray = doubledArray;
+
+
+
+  } else {
+    *(da->underlyingArray + lastFilledIndex + 1) = x;
+  }
+
+
 }
+
+
 
 void *DA_pop(DynamicArray *da) {
   // TODO pop from the end
