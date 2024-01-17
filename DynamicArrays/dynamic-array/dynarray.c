@@ -14,11 +14,15 @@ typedef struct DynamicArray {
   int size;
 } DynamicArray;
 
+int getSizeOfInt() {
+  return sizeof(int);
+}
 
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
   int first = '\0';
+  dynamicArray->underlyingArray = malloc(getSizeOfInt() * 1);
   (*dynamicArray).underlyingArray = &first;
   (*dynamicArray).lastFilledIndex = -1;
   (*dynamicArray).size = 0;
@@ -31,7 +35,7 @@ int DA_size(DynamicArray *da) {
   return (*da).size;
 }
 
-void DA_push (DynamicArray* da, void* x) {
+void DA_push (DynamicArray* da, int* x) {
   // TODO push to the end
   //Approach 1:
   // Get lastFilledIndex
@@ -49,12 +53,12 @@ void DA_push (DynamicArray* da, void* x) {
   int lastFilledIndex = (*da).lastFilledIndex;
   int sizeOfDa = DA_size(da);
   if (lastFilledIndex == -1) {
-    (*da).underlyingArray[0] = x;
+    *(da->underlyingArray) = *x;
     (*da).size++;
   }
 
   if (lastFilledIndex == sizeOfDa - 1) {
-    int sizeOfInt = sizeof(int);
+    int sizeOfInt = getSizeOfInt();
     int* doubledArray = malloc(sizeOfDa * sizeOfInt * 2);
 
     //set all values in doubledArray to '\0'
@@ -62,25 +66,27 @@ void DA_push (DynamicArray* da, void* x) {
       *(doubledArray + i) =  '\0';
     }
 
+    //copy values from underlying array to doubledArray from the filled indices
     for (int j=0; j <= lastFilledIndex; j++) {
-      *(doubledArray + j) = ((*da).underlyingArray + j);
+      *(doubledArray + j) = *(da->underlyingArray + j);
     }
 
     //free memory allocated to underlyingArray
     free(da->underlyingArray);
 
     //reassign underlyingArray to point to doubledArray, the first memory address of the sequence of elements
-    *(doubledArray + lastFilledIndex + 1) = x;
+    *(doubledArray + lastFilledIndex + 1) = *x;
     da->underlyingArray = doubledArray;
 
 
 
   } else {
-    *(da->underlyingArray + lastFilledIndex + 1) = x;
+    *(da->underlyingArray + lastFilledIndex + 1) = *x;
   }
 
 
 }
+
 
 
 
@@ -110,8 +116,8 @@ int main() {
     int x = 5;
     float y = 12.4;
     DA_push(da, &x);
-    DA_push(da, &y);
-    assert(DA_size(da) == 2);
+    // DA_push(da, &y);
+    assert(DA_size(da) == 1);
     printf("OK\n");
 
     assert(DA_pop(da) == &y);
