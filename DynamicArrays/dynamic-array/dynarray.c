@@ -22,17 +22,17 @@ DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
   int first = '\0';
-  dynamicArray->underlyingArray = malloc(getSizeOfInt() * 1);
-  (*dynamicArray).underlyingArray = &first;
-  (*dynamicArray).lastFilledIndex = -1;
-  (*dynamicArray).size = 0;
+  dynamicArray = (DynamicArray*) malloc(sizeof(DynamicArray));
+  dynamicArray->underlyingArray = &first;
+  dynamicArray->lastFilledIndex = -1;
+  dynamicArray->size = 0;
   return dynamicArray;
 }
 
 int DA_size(DynamicArray *da) {
   // TODO return the number of items in the dynamic array
   //keep iterating until you reach an element of a different data
-  return (*da).size;
+  return da->size;
 }
 
 void DA_push (DynamicArray* da, int* x) {
