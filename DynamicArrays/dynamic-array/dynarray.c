@@ -9,7 +9,7 @@
 
 typedef struct DynamicArray {
   // TODO define our struct
-  int* underlyingArray;
+  void* underlyingArray;
   int lastFilledIndex; 
   int size;
 } DynamicArray;
@@ -21,12 +21,18 @@ int getSizeOfInt() {
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
-  int first = '\0';
+
   dynamicArray = (DynamicArray*) malloc(sizeof(DynamicArray));
-  dynamicArray->underlyingArray = &first;
+  dynamicArray->underlyingArray = malloc(sizeof(void));
   dynamicArray->lastFilledIndex = -1;
   dynamicArray->size = 0;
   return dynamicArray;
+}
+
+void DA_free(DynamicArray *da) {
+  // TODO deallocate anything on the heap
+  free(da->underlyingArray);
+  free(da);
 }
 
 int DA_size(DynamicArray *da) {
@@ -35,13 +41,13 @@ int DA_size(DynamicArray *da) {
   return da->size;
 }
 
-void DA_push (DynamicArray* da, int* x) {
+void DA_push (DynamicArray* da, void* x) {
   // TODO push to the end
   //Approach 1:
   // Get lastFilledIndex
   // if lastFilledIndex == -1
   //    underlyingArray[0] = x
-  // if lastFilledIndex == size of underlyingArray - 1
+  // if lastFilledIndex == size of underlyingArray - 1 (array is full)
   //  initialize new array doubledArray[size of underlyingArray * 2]
   // iterate from 0 to lastFilledIndex
   //  set doubledArray[i] = underlyingArray[i]
@@ -50,39 +56,28 @@ void DA_push (DynamicArray* da, int* x) {
   // set underlying array to doubledArray
   // else 
   //set underlyingArray[lastFilledIndex + 1] = x
+
+
+  //Approach 2:
+  // Get lastFilledIndex
+  //  if lastFilledIndex == -1 (array is empty)
+  //    *(da->underlyingArray)=x
+  //  else if lastFilledIndex == size of underlyingArray - 1 (array is full)
+  //    resize the memory allocated to underlying array to double the current size da->size * 2
+  //  set *(da->underlyingArray + lastFilledIndex + 1) = *x
+
+
   int lastFilledIndex = (*da).lastFilledIndex;
   int sizeOfDa = DA_size(da);
+
   if (lastFilledIndex == -1) {
-    *(da->underlyingArray) = *x;
-    (*da).size++;
+    da->underlyingArray = x;
+    da->size++;
+  } else if (lastFilledIndex == sizeOfDa - 1) {
+    realloc(da->underlyingArray, da->size * 2);
   }
 
-  if (lastFilledIndex == sizeOfDa - 1) {
-    int sizeOfInt = getSizeOfInt();
-    int* doubledArray = malloc(sizeOfDa * sizeOfInt * 2);
-
-    //set all values in doubledArray to '\0'
-    for (int i=0; i < sizeOfDa * 2; i++) {
-      *(doubledArray + i) =  '\0';
-    }
-
-    //copy values from underlying array to doubledArray from the filled indices
-    for (int j=0; j <= lastFilledIndex; j++) {
-      *(doubledArray + j) = *(da->underlyingArray + j);
-    }
-
-    //free memory allocated to underlyingArray
-    free(da->underlyingArray);
-
-    //reassign underlyingArray to point to doubledArray, the first memory address of the sequence of elements
-    *(doubledArray + lastFilledIndex + 1) = *x;
-    da->underlyingArray = doubledArray;
-
-
-
-  } else {
-    *(da->underlyingArray + lastFilledIndex + 1) = *x;
-  }
+  da->underlyingArray[lastFilledIndex + 1] = x;
 
 
 }
@@ -92,20 +87,25 @@ void DA_push (DynamicArray* da, int* x) {
 
 void *DA_pop(DynamicArray *da) {
   // TODO pop from the end
+  //Approach 1:
+  //get value at last filled index
+  //and set value at last filled index to '\0' 
+  *(da->underlyingArray + da->lastFilledIndex) = '\0';
 }
 
 void DA_set(DynamicArray *da, void *x, int i) {
   // TODO set at a given index, if possible
+  //set value at index
+  (da->underlyingArray + i) = x;
 }
 
 void *DA_get(DynamicArray *da, int i) {
   // TODO get from a given index, if possible
+  return (da->underlyingArray + i);
 }
 
 
-void DA_free(DynamicArray *da) {
-  // TODO deallocate anything on the heap
-}
+
 
 int main() {
     DynamicArray* da = DA_new();
@@ -114,10 +114,10 @@ int main() {
 
     // basic push and pop test
     int x = 5;
-    float y = 12.4;
+    int y = 12.4;
     DA_push(da, &x);
-    // DA_push(da, &y);
-    assert(DA_size(da) == 1);
+    DA_push(da, &y);
+    assert(DA_size(da) == 2);
     printf("OK\n");
 
     assert(DA_pop(da) == &y);
