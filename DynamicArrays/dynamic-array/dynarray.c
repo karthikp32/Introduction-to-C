@@ -77,8 +77,8 @@ void DA_push (DynamicArray* da, void* x) {
     realloc(da->underlyingArray, da->size * 2);
   }
 
-  da->underlyingArray[lastFilledIndex + 1] = x;
-
+  // da->underlyingArray[lastFilledIndex + 1] = x;
+  da->underlyingArray * sizeof(typeof(*x)) * da->lastFilledIndex = *x;
 
 }
 
