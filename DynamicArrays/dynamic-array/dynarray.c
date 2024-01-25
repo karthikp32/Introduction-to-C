@@ -9,7 +9,7 @@
 
 typedef struct DynamicArray {
   // TODO define our struct
-  void* underlyingArray;
+  void** underlyingArray;
   int lastFilledIndex; 
   int size;
 } DynamicArray;
@@ -21,9 +21,8 @@ int getSizeOfInt() {
 DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
-
   dynamicArray = (DynamicArray*) malloc(sizeof(DynamicArray));
-  dynamicArray->underlyingArray = malloc(sizeof(void));
+  dynamicArray->underlyingArray = malloc(sizeof(void*));
   dynamicArray->lastFilledIndex = -1;
   dynamicArray->size = 0;
   return dynamicArray;
@@ -71,15 +70,16 @@ void DA_push (DynamicArray* da, void* x) {
   int sizeOfDa = DA_size(da);
 
   if (lastFilledIndex == -1) {
-    da->underlyingArray = x;
+    da->underlyingArray[0] = x;
     da->size++;
+    da->lastFilledIndex = 0;
   } else if (lastFilledIndex == sizeOfDa - 1) {
-    realloc(da->underlyingArray, da->size * 2);
+    da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * da->size * 2);
   }
 
   // da->underlyingArray[lastFilledIndex + 1] = x;
-  da->underlyingArray * sizeof(typeof(*x)) * da->lastFilledIndex = *x;
-
+*(da->underlyingArray + lastFilledIndex + 1) = x;
+  // da->lastFilledIndex = lastFilledIndex + 1;
 }
 
 
@@ -90,18 +90,20 @@ void *DA_pop(DynamicArray *da) {
   //Approach 1:
   //get value at last filled index
   //and set value at last filled index to '\0' 
-  *(da->underlyingArray + da->lastFilledIndex) = '\0';
+  void* temp = *(da->underlyingArray + da->lastFilledIndex);
+  *(da->underlyingArray + da->lastFilledIndex) = NULL;
+  return temp;
 }
 
 void DA_set(DynamicArray *da, void *x, int i) {
   // TODO set at a given index, if possible
   //set value at index
-  (da->underlyingArray + i) = x;
+  *(da->underlyingArray + i) = x;
 }
 
 void *DA_get(DynamicArray *da, int i) {
   // TODO get from a given index, if possible
-  return (da->underlyingArray + i);
+  return *(da->underlyingArray + i);
 }
 
 
@@ -117,7 +119,13 @@ int main() {
     int y = 12.4;
     DA_push(da, &x);
     DA_push(da, &y);
+
+    printf("size is %i\n", DA_size(da));
+    printf("first element is %i\n", *((int*)*da->underlyingArray));
+    printf("second element is %i\n", *((int*)*(da->underlyingArray + 1)));
+
     assert(DA_size(da) == 2);
+
     printf("OK\n");
 
     assert(DA_pop(da) == &y);
