@@ -22,7 +22,7 @@ DynamicArray* DA_new (void) {
   // TODO allocate and return a new dynamic array
   struct DynamicArray* dynamicArray;
   dynamicArray = (DynamicArray*) malloc(sizeof(DynamicArray));
-  dynamicArray->underlyingArray = malloc(sizeof(void*));
+  dynamicArray->underlyingArray = (void**)malloc(sizeof(void*));
   dynamicArray->lastFilledIndex = -1;
   dynamicArray->size = 0;
   return dynamicArray;
@@ -69,17 +69,14 @@ void DA_push (DynamicArray* da, void* x) {
   int lastFilledIndex = (*da).lastFilledIndex;
   int sizeOfDa = DA_size(da);
 
-  if (lastFilledIndex == -1) {
-    da->underlyingArray[0] = x;
-    da->size++;
-    da->lastFilledIndex = 0;
-  } else if (lastFilledIndex == sizeOfDa - 1) {
+  if (sizeOfDa > 0 && lastFilledIndex == sizeOfDa - 1) {
     da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * da->size * 2);
   }
 
   // da->underlyingArray[lastFilledIndex + 1] = x;
 *(da->underlyingArray + lastFilledIndex + 1) = x;
-  // da->lastFilledIndex = lastFilledIndex + 1;
+  da->size++;
+  da->lastFilledIndex++;
 }
 
 
@@ -90,8 +87,17 @@ void *DA_pop(DynamicArray *da) {
   //Approach 1:
   //get value at last filled index
   //and set value at last filled index to '\0' 
+  if (da->size == 0) {
+    return NULL;
+  }
+
   void* temp = *(da->underlyingArray + da->lastFilledIndex);
+  
   *(da->underlyingArray + da->lastFilledIndex) = NULL;
+  
+  da->size--;
+  da->lastFilledIndex--;
+
   return temp;
 }
 
@@ -162,4 +168,6 @@ int main() {
     DA_free(da);
     DA_free(da2);
     printf("OK\n");
+    printf("All assertions passed\n");
+
 }
