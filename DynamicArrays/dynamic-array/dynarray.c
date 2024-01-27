@@ -12,6 +12,7 @@ typedef struct DynamicArray {
   void** underlyingArray;
   int lastFilledIndex; 
   int size;
+  int capacity;
 } DynamicArray;
 
 int getSizeOfInt() {
@@ -25,6 +26,7 @@ DynamicArray* DA_new (void) {
   dynamicArray->underlyingArray = (void**)malloc(sizeof(void*));
   dynamicArray->lastFilledIndex = -1;
   dynamicArray->size = 0;
+  dynamicArray->capacity = STARTING_CAPACITY;
   return dynamicArray;
 }
 
@@ -68,17 +70,18 @@ void DA_push (DynamicArray* da, void* x) {
 
   int lastFilledIndex = (*da).lastFilledIndex;
   int sizeOfDa = DA_size(da);
-
-  if (sizeOfDa > 0 && lastFilledIndex == sizeOfDa - 1) {
-    da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * da->size * 2);
-  }
+  if (sizeOfDa == 0) {
+    da->underlyingArray = malloc(sizeof(void*) * 1);
+  } else if (sizeOfDa > 0 && da->size == da->capacity) {
+    da->capacity *= 2;
+    da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * da->capacity);
+    printf("resized to %d\n", da->capacity);
+  } 
 
 *(da->underlyingArray + lastFilledIndex + 1) = x;
   da->size++;
   da->lastFilledIndex++;
 }
-
-
 
 
 void *DA_pop(DynamicArray *da) {
@@ -87,7 +90,12 @@ void *DA_pop(DynamicArray *da) {
   //get value at last filled index
   //and set value at last filled index to '\0' 
   if (da->size == 0) {
+    free(da->underlyingArray);
     return NULL;
+  }
+
+  if (da->size * 2 == da->capacity) {
+    da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * (da->size));
   }
 
   void* temp = *(da->underlyingArray + da->lastFilledIndex);
