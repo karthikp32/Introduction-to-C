@@ -26,7 +26,7 @@ DynamicArray* DA_new (void) {
   dynamicArray->underlyingArray = (void**)malloc(sizeof(void*));
   dynamicArray->lastFilledIndex = -1;
   dynamicArray->size = 0;
-  dynamicArray->capacity = STARTING_CAPACITY;
+  dynamicArray->capacity = 1;
   return dynamicArray;
 }
 
@@ -71,11 +71,11 @@ void DA_push (DynamicArray* da, void* x) {
   int lastFilledIndex = (*da).lastFilledIndex;
   int sizeOfDa = DA_size(da);
   if (sizeOfDa == 0) {
-    da->underlyingArray = malloc(sizeof(void*) * 1);
-  } else if (sizeOfDa > 0 && da->size == da->capacity) {
+    da->underlyingArray = (void**) malloc(sizeof(void*) * 1);
+  } else if (sizeOfDa > 0 && da->size == da->capacity) { //might not be passing into this block
     da->capacity *= 2;
+    printf("going to be resized to %d\n", da->capacity);
     da->underlyingArray = realloc(da->underlyingArray, sizeof(void*) * da->capacity);
-    printf("resized to %d\n", da->capacity);
   } 
 
 *(da->underlyingArray + lastFilledIndex + 1) = x;
@@ -147,6 +147,7 @@ int main() {
     assert(DA_pop(da) == &x);
     assert(DA_size(da) == 0);
     assert(DA_pop(da) == NULL);
+    printf("OK\n");
 
     // basic set/get test
     DA_push(da, &x);
